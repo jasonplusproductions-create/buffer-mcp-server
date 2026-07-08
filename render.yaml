@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: buffer-mcp-server
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: TRANSPORT
+        value: http
+      - key: BUFFER_API_KEY
+        sync: false
+      - key: MCP_SHARED_SECRET
+        sync: false
+      - key: PORT
+        value: 3000
