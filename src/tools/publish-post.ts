@@ -18,7 +18,8 @@ const MUTATION = `
 `;
 
 function buildInput(params: PublishPostInput): Record<string, unknown> {
-  const base = { text: params.text, channelId: params.channelId };
+  // Buffer's CreatePostInput requires assets (non-null list); empty for text-only posts.
+  const base = { text: params.text, channelId: params.channelId, assets: [] };
   return params.mode === "scheduled"
     ? { ...base, schedulingType: "automatic", mode: "customScheduled", dueAt: params.dueAt }
     : { ...base, schedulingType: "automatic", mode: "addToQueue" };

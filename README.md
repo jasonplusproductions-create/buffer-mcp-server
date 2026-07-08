@@ -4,23 +4,21 @@ A custom MCP server that gives Claude **real** publish/schedule access to Buffer
 via the `createPost` GraphQL mutation — beyond what the official Buffer MCP connector
 exposes (which is read-only + `create_idea` drafts only).
 
-## ⚠️ Before you run this: verify the schema
+## Schema status: verified against the live API
 
-I built this against Buffer's publicly documented GraphQL examples
-(`developers.buffer.com`), but I have not run it against a live Buffer GraphQL
-endpoint or introspected the schema myself. Specifically double-check, using
-Buffer's API docs or GraphQL schema explorer at https://buffer.com/developer-api:
+The GraphQL operations here were introspected and validated against Buffer's live
+endpoint (`api.buffer.com`). Two things were corrected after the initial build:
 
-1. **The `channels` query name and fields** in `src/tools/list-channels.ts` — Buffer's
-   docs I found didn't show this query's exact shape, only the `createPost` mutation.
-   You may need to adjust the query name/fields (e.g. it might be `me.organizations[].channels`
-   rather than a flat `channels(organizationId)` query).
-2. **The `CreatePostInput` field names** in `src/tools/publish-post.ts` — these match
-   the examples in Buffer's docs (`schedulingType`, `mode`, `dueAt`, `saveToDraft`), but
-   confirm against the schema explorer before relying on it for real campaigns.
+1. **The `channels` query** in `src/tools/list-channels.ts` takes a single
+   `input: ChannelsInput!` argument (`{ organizationId }`), not a flat
+   `channels(organizationId:)` argument.
+2. **`CreatePostInput.assets` is a required (non-null) list.** Both
+   `src/tools/draft-post.ts` and `src/tools/publish-post.ts` now send `assets: []`
+   for text-only posts. The other fields (`schedulingType`, `mode`, `dueAt`,
+   `saveToDraft`, `channelId`, `text`) match the live schema.
 
-Easiest way to check: open Buffer's API docs playground and run a small test query/mutation
-by hand first, then adjust the `.ts` files to match if anything differs.
+If Buffer changes their schema, re-introspect with a small test query/mutation and
+adjust the `.ts` files to match.
 
 ## Setup
 

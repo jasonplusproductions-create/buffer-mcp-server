@@ -12,8 +12,8 @@ interface ChannelsQueryResult {
 }
 
 const QUERY = `
-  query ListChannels($organizationId: String!) {
-    channels(organizationId: $organizationId) {
+  query ListChannels($input: ChannelsInput!) {
+    channels(input: $input) {
       id
       displayName
       service
@@ -45,7 +45,7 @@ Returns JSON: { "channels": [{ "id", "displayName", "service", "isDisconnected" 
     },
     async (params: ListChannelsInput) => {
       const data = await bufferGraphQL<ChannelsQueryResult>(QUERY, {
-        organizationId: params.organizationId,
+        input: { organizationId: params.organizationId },
       });
 
       return {

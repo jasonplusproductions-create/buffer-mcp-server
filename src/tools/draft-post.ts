@@ -45,6 +45,8 @@ Returns JSON: { "id", "text", "dueAt" }`,
             schedulingType: "automatic",
             mode: "addToQueue",
             saveToDraft: true,
+            // Buffer's CreatePostInput requires assets (non-null list); empty for text-only posts.
+            assets: [],
             ...(params.suggestedDueAt ? { dueAt: params.suggestedDueAt } : {}),
           },
         });
